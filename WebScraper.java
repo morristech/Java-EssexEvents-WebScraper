@@ -25,6 +25,7 @@ public class WebScraper {
     private static ArrayList<String> eventImages = new ArrayList<String>();
     private static ArrayList<String> eventDescs = new ArrayList<String>();
 
+    //Attempting Initial Connection
     private int connect(){
         try {
             Document connection = Jsoup.connect("http://www.essexstudent.com/whatson/").get();
@@ -75,6 +76,7 @@ public class WebScraper {
     }
 
     //For loop causes scraper to run infinitely
+    //Retrieve Images For Each Link
     private void getImages(Document connection) {
         try {
             Elements rawImage = connection.select("img");
@@ -93,6 +95,7 @@ public class WebScraper {
         }
     }
 
+    //Retrieve the Titles for each event
     private void getTitles(Document connection) {
         Elements rawTitle = connection.select("h1.header");
 
@@ -102,6 +105,7 @@ public class WebScraper {
         }
     }
 
+    //Retrieve the informatio nabout each event - date, time and location
     private void getInfo(Document connection) {
         Elements rawInfo = connection.select("h2");
 
@@ -110,7 +114,8 @@ public class WebScraper {
             eventInfos.add(info);
         }
     }
-
+ 
+    //Retrieve the description of each event
     private void getDesc(Document connection) {
         Elements rawDesc = connection.select("p");
         String desc = "";
@@ -121,36 +126,42 @@ public class WebScraper {
         eventDescs.add(desc);
     }
 
+    //Display the eventLinks array
     private void displayLinks() {
         for(int i=0;i<eventLinks.size();i++) {
             System.out.println("Event Link: "+eventLinks.get(i));
         }
     }
 
+    //Display the eventTitles array
     private void displayTitles() {
         for(int i=0;i<eventTitles.size();i++) {
             System.out.println("Event Title: "+eventTitles.get(i));
         }
     }
 
+    //Display the eventImages array
     private void displayImages() {
         for(int i=0;i<eventImages.size();i++) {
             System.out.println("Event Image: "+eventImages.get(i));
         }
     }
 
+    //Display the eventInfos array
     private void displayInfos() {
         for(int i=0;i<eventInfos.size();i++) {
             System.out.println("Event Info: "+eventInfos.get(i));
         }
     }
 
+    //Display the eventDescs array
     private void displayDescs() {
         for(int i=0;i<eventDescs.size();i++) {
             System.out.println("Event Desc: "+eventDescs.get(i));
         }
     }
 
+    //Test main to fill arrays and check their contents
     public static void main(String[] args) {
         WebScraper whatson = new WebScraper();
 
