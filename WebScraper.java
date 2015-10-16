@@ -16,7 +16,6 @@ public class WebScraper {
 
     //Creating a global variable
     private static int x;
-    //private static int n;
 
     //Creating ArrayLists
     private static ArrayList<String> eventLinks = new ArrayList<String>();
