@@ -78,13 +78,9 @@ public class WebScraper {
     //Retrieve Images For Each Link
     private void getImages(Document connection) {
         try {
-            Elements rawImage = connection.select("img");
-
-            for (Element e : rawImage) {
-                Element correctImage = e.getElementById("ctl00_ctl22_imgBanner");
-                String image = correctImage.attr("src");
-                eventImages.add(image);
-            }
+            Element correctImage = connection.getElementById("ctl00_ctl22_imgBanner");
+            String image = correctImage.attr("src");
+            eventImages.add(image);
         } catch (Exception ex) {
             if (ex instanceof NullPointerException) {
                 x--;
@@ -113,7 +109,7 @@ public class WebScraper {
             eventInfos.add(info);
         }
     }
- 
+
     //Retrieve the description of each event
     private void getDesc(Document connection) {
         Elements rawDesc = connection.select("p");
@@ -164,21 +160,27 @@ public class WebScraper {
     public static void main(String[] args) {
         WebScraper whatson = new WebScraper();
 
+        System.out.println("stage one");
         whatson.connect();
         whatson.getLinks();
 
+        System.out.println("stage two");
         for(x=1;x<eventLinks.size();x++) {
             whatson.getTitles(whatson.getEvent());
             whatson.getImages(whatson.getEvent());
             whatson.getInfo(whatson.getEvent());
             whatson.getDesc(whatson.getEvent());
+            System.out.println("loop complete, starting next loop");
         }
+
+        System.out.println("stage three");
         whatson.displayLinks();
         whatson.displayImages();
         whatson.displayTitles();
         whatson.displayDescs();
         whatson.displayInfos();
 
+        System.out.println("stage four");
         System.out.println("Events: "+eventLinks.size());
         System.out.println("Images: "+eventImages.size());
         System.out.println("Descriptions: "+eventDescs.size());
