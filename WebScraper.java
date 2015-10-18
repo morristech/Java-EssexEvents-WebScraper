@@ -4,6 +4,7 @@ package com.matthew.whatson;
  * Created by matthew on 12/10/15.
  */
 
+import com.sun.org.apache.xpath.internal.operations.Equals;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -101,25 +102,41 @@ public class WebScraper {
         }
     }
 
-    //Retrieve the informatio nabout each event - date, time and location
+    //Retrieve the information about each event - date, time and location
     private void getInfo(Document connection) {
         Elements rawInfo = connection.select("h2");
+        String info = "";
 
         for(Element e: rawInfo) {
-            String info = e.text();
+            info += e.text()+" ";
             eventInfos.add(info);
         }
     }
 
     //Retrieve the description of each event
     private void getDesc(Document connection) {
-        Elements rawDesc = connection.select("p");
+        Elements rawDesc = connection.select("h3,p");
         String desc = "";
 
         for(Element e: rawDesc) {
-            desc += e.text();
+            String check = e.text();
+            System.out.println(":"+check+":");
+            if (check.equals("Tickets")) {
+                //Do nothing
+            } else {
+                desc += e.text()+" ";
+            }
         }
-        eventDescs.add(desc);
+
+        desc = desc.replace("Powered by MSL","");
+
+        //Removing whitespaces - checking for ASCII characters
+        if (desc.matches(".*\\w.*")) {
+            eventDescs.add(desc);
+        } else {
+            desc = "More details for this event coming soon!, Watch this space!";
+            eventDescs.add(desc);
+        }
     }
 
     //Display the eventLinks array
@@ -164,9 +181,12 @@ public class WebScraper {
         System.out.println("stage one");
         whatson.connect();
         whatson.getLinks();
+        for(int o=0;o<eventLinks.size();o++) {
+            System.out.println(eventLinks.get(o));
+        }
 
         System.out.println("stage two");
-        for(x=1;x<eventLinks.size();x++) {
+        for(x=0;x<eventLinks.size();x++) {
             whatson.getTitles(whatson.getEvent());
             whatson.getImages(whatson.getEvent());
             whatson.getInfo(whatson.getEvent());
