@@ -4,7 +4,6 @@ package com.matthew.whatson;
  * Created by matthew on 12/10/15.
  */
 
-import com.sun.org.apache.xpath.internal.operations.Equals;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
