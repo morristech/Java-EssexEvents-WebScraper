@@ -75,12 +75,11 @@ public class WebScraper {
         }
     }
 
-    //For loop causes scraper to run infinitely
     //Retrieve Images For Each Link
     private void getImages(Document connection) {
         try {
-            //Element correctImage = connection.getElementById("ctl00_ctl22_imgBanner");
-            Element correctImage = connection.getElementById("msl_event");
+            Element correctImage = connection.getElementById("ctl00_ctl22_imgBanner");
+            //Element correctImage = connection.getElementById("msl_event");
             String image = correctImage.attr("src");
             eventImages.add(image);
         } catch (Exception ex) {
