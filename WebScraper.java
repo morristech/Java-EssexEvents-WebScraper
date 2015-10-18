@@ -119,10 +119,9 @@ public class WebScraper {
 
         for(Element e: rawDesc) {
             String check = e.text();
-            System.out.println(":"+check+":");
             if (check.equals("Tickets")) {
                 //Do nothing
-            } else {
+            } else if (check.matches(".*\\w.*")) {
                 desc += e.text()+" ";
             }
         }
