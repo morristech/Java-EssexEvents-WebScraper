@@ -14,10 +14,6 @@ import java.util.ArrayList;
 
 public class WebScraper {
 
-    //Creating a global variable
-    private static int x;
-    int itemNumber = x;
-
     //Creating ArrayLists
     private static ArrayList<String> eventLinks = new ArrayList<String>();
     private static ArrayList<String> eventTitles = new ArrayList<String>();
@@ -29,7 +25,7 @@ public class WebScraper {
 
 
     //Attempting Initial Connection
-    private int connect(){
+    public int connect(){
         try {
             Document connection = Jsoup.connect("http://www.essexstudent.com/whatson/").get();
             System.out.println(">> Connection Successful");
@@ -41,7 +37,7 @@ public class WebScraper {
     }
 
     //Retrieving initial links from http://www.essexstudent.com/whatson/ of all events
-    private void getLinks() {
+    public void getLinks() {
         System.out.println(">> Retrieving Links At: http://www.essexstudent.com/whatson/");
         try {
             Document allEvents = Jsoup.connect("http://www.essexstudent.com/whatson/").get();
@@ -61,7 +57,7 @@ public class WebScraper {
     }
 
     //Connecting to individual events
-    private Document getEvent() {
+    public Document getEvent(int x) {
         try {
             Document Event = Jsoup.connect(eventLinks.get(x)).get();
 
@@ -81,7 +77,7 @@ public class WebScraper {
     //Replace 50 with a variable all for loops can work off of,
     //might not always be 50 events on.
     //Retrieve Images For Each Link
-    private void getImages() {
+    public void getImages(int itemNumber) {
         try {
 
             Elements span;
@@ -134,29 +130,37 @@ public class WebScraper {
         }
     }
 
+    //Delete 'X' in argument and commment
     //Retrieve the Titles for each event
-    private void getTitles(Document connection) {
+    public void getTitles(Document connection,int x) {
         Elements rawTitle = connection.select("h1.header");
 
         for(Element e: rawTitle) {
             String title = e.text();
             eventTitles.add(title);
         }
+
+        System.out.println("title: "+x+"//////////");
     }
 
+    //Delete 'X' in argument and commment
     //Retrieve the information about each event - date, time and location
-    private void getInfo(Document connection) {
+    public void getInfo(Document connection,int x) {
         Elements rawInfo = connection.select("h2");
         String info = "";
 
         for(Element e: rawInfo) {
+            System.out.println("info x inside: "+x+"::::::::::::::::::::::::");
+            System.out.println("Link: "+eventLinks.get(x));
             info += e.text()+" ";
             eventInfos.add(info);
         }
+        System.out.println("info x outside: "+x+"]]]]]]]]]]]]]]]]]]");
     }
 
+    //Delete 'X' in argument and commment
     //Retrieve the description of each event
-    private void getDesc(Document connection) {
+    public void getDesc(Document connection,int x) {
         Elements rawDesc = connection.select("h3,p");
         String desc = "";
 
@@ -168,6 +172,7 @@ public class WebScraper {
                 desc += e.text()+" ";
             }
         }
+        System.out.println("desc int: "+x+" ....................");
 
         desc = desc.replace("Powered by MSL","");
 
@@ -178,6 +183,26 @@ public class WebScraper {
             desc = "More details for this event coming soon!, Watch this space!";
             eventDescs.add(desc);
         }
+    }
+
+    public ArrayList<String> returnLinks() {
+        return eventLinks;
+    }
+
+    public ArrayList<String> returnImages() {
+        return eventImages;
+    }
+
+    public ArrayList<String> returnTitles() {
+        return eventTitles;
+    }
+
+    public ArrayList<String> returnInfos() {
+        return eventInfos;
+    }
+
+    public ArrayList<String> returnDescs() {
+        return eventDescs;
     }
 
     //Display the eventLinks array
@@ -216,18 +241,25 @@ public class WebScraper {
     }
 
     //Test main to fill arrays and check their contents
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         WebScraper whatson = new WebScraper();
 
         System.out.println("stage one");
         whatson.connect();
         whatson.getLinks();
+        for(int o=0;o<eventLinks.size();o++) {
+            System.out.println(eventLinks.get(o));
+        }
 
         System.out.println("stage two");
         for(x=0;x<eventLinks.size();x++) {
+            System.out.println("--------------------------------------------------------------");
             whatson.getTitles(whatson.getEvent());
             whatson.getInfo(whatson.getEvent());
             whatson.getDesc(whatson.getEvent());
+            System.out.println("loop complete, starting next loop");
+            System.out.println("x in main loop: "+x+" ---------------------");
+            System.out.println("--------------------------------------------------------------");
         }
         whatson.getImages();
 
@@ -244,5 +276,5 @@ public class WebScraper {
         System.out.println("Descriptions: "+eventDescs.size());
         System.out.println("Titles: "+eventTitles.size());
         System.out.println("Infos: "+eventInfos.size());
-    }
+    }*/
 }
