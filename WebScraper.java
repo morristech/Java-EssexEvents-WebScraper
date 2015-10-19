@@ -16,6 +16,7 @@ public class WebScraper {
 
     //Creating a global variable
     private static int x;
+    int itemNumber = x;
 
     //Creating ArrayLists
     private static ArrayList<String> eventLinks = new ArrayList<String>();
@@ -23,6 +24,9 @@ public class WebScraper {
     private static ArrayList<String> eventInfos = new ArrayList<String>();
     private static ArrayList<String> eventImages = new ArrayList<String>();
     private static ArrayList<String> eventDescs = new ArrayList<String>();
+    private static ArrayList<Boolean> imageChecks = new ArrayList<Boolean>();
+    private static ArrayList<String> tempImages = new ArrayList<String>();
+
 
     //Attempting Initial Connection
     private int connect(){
@@ -65,7 +69,7 @@ public class WebScraper {
 
         } catch (Exception ex) {
             if (ex instanceof NullPointerException) {
-                x=x-1;
+                //do nothing
                 return null;
             } else {
                 System.out.println(">> Connection Error: WebPage may not exist");
@@ -74,16 +78,56 @@ public class WebScraper {
         }
     }
 
+    //Replace 50 with a variable all for loops can work off of,
+    //might not always be 50 events on.
     //Retrieve Images For Each Link
-    private void getImages(Document connection) {
+    private void getImages() {
         try {
-            Element correctImage = connection.getElementById("ctl00_ctl22_imgBanner");
-            //Element correctImage = connection.getElementById("msl_event");
-            String image = correctImage.attr("src");
-            eventImages.add(image);
+
+            Elements span;
+            Document connection = Jsoup.connect("http://www.essexstudent.com/whatson/").get();
+            Elements imageFinder = connection.select("span.msl_event_image");
+            int tempInt = 0;
+
+            for (int n=0;n<50;n++) {
+                itemNumber++;
+
+                if ((itemNumber % 2) == 0) {
+                    span = connection.select("div.event_item.item" + itemNumber + ".itemEven > dl > dt > a > span.msl_event_image");
+                } else {
+                    span = connection.select("div.event_item.item" + itemNumber + ".itemOdd > dl > dt > a > span.msl_event_image");
+                }
+
+                String check = span.toString();
+
+                if (check.matches(".*\\w.*")) {
+                    imageChecks.add(true);
+                } else {
+                    imageChecks.add(false);
+                }
+            }
+
+            for (Element e: imageFinder) {
+                Elements imageTag = e.select("img");
+                String allImages = imageTag.attr("src");
+                tempImages.add(allImages);
+            }
+
+            for (int n=0;n<imageChecks.size();n++) {
+                if (imageChecks.get(n)) {
+                    eventImages.add(tempImages.get(tempInt));
+                    tempInt++;
+                } else {
+                    Document eventPage = Jsoup.connect(eventLinks.get(n)).get();
+                    Elements defaultImage = eventPage.select("#ctl00_ctl22_imgBanner");
+                    String imageURL = defaultImage.attr("src");
+                    eventImages.add(imageURL);
+                }
+            }
+
         } catch (Exception ex) {
             if (ex instanceof NullPointerException) {
-                x--;
+                //do nothing
             } else {
                 System.out.println(">> Error Retrieving Image");
             }
@@ -178,18 +222,14 @@ public class WebScraper {
         System.out.println("stage one");
         whatson.connect();
         whatson.getLinks();
-        for(int o=0;o<eventLinks.size();o++) {
-            System.out.println(eventLinks.get(o));
-        }
 
         System.out.println("stage two");
         for(x=0;x<eventLinks.size();x++) {
             whatson.getTitles(whatson.getEvent());
-            whatson.getImages(whatson.getEvent());
             whatson.getInfo(whatson.getEvent());
             whatson.getDesc(whatson.getEvent());
-            System.out.println("loop complete, starting next loop");
         }
+        whatson.getImages();
 
         System.out.println("stage three");
         whatson.displayLinks();
